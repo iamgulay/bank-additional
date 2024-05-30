@@ -4,14 +4,13 @@ import pandas as pd
 import streamlit as st
 from sklearn.base import BaseEstimator, TransformerMixin
 from sklearn.preprocessing import LabelEncoder
-from sklearn.compose import ColumnTransformer
 
 # Modelin yüklenmesi
 loaded_model = pickle.load(open('bank_marketing_prediction.sav', 'rb'))
 
 # Kategorik sütunlar için özel etiketleyici dönüştürücü
 class CustomLabelEncoder(BaseEstimator, TransformerMixin):
-    def _init_(self, columns):
+    def __init__(self, columns):
         self.columns = columns
         self.encoders = {}
 
@@ -29,7 +28,7 @@ class CustomLabelEncoder(BaseEstimator, TransformerMixin):
         return X
 
 class FeaturesAdder(BaseEstimator, TransformerMixin):
-    def _init_(self):
+    def __init__(self):
         pass
 
     def fit(self, X, y=None):
@@ -95,5 +94,5 @@ def main():
         
     st.success(prediction)
     
-if _name_ == '_main_':
+if __name__ == '__main__':
     main()
