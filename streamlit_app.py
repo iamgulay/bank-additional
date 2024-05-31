@@ -6,7 +6,8 @@ from sklearn.base import BaseEstimator, TransformerMixin
 from sklearn.preprocessing import LabelEncoder
 
 # Modelin yüklenmesi
-loaded_model = pickle.load(open('bank_marketing_prediction.sav', 'rb'))
+with open('bank_marketing_prediction.sav', 'rb') as model_file:
+    loaded_model = pickle.load(model_file)
 
 # Kategorik sütunlar için özel etiketleyici dönüştürücü
 class CustomLabelEncoder(BaseEstimator, TransformerMixin):
@@ -49,6 +50,17 @@ def bank_marketing_prediction(input_data):
                     'euribor3m', 'nr.employed']  # Alt çizgi yerine nokta kullanın
 
     input_data = pd.DataFrame([input_data], columns=column_names)
+    
+    # Önişleme adımlarını uygula
+    categorical_columns = ['job', 'marital', 'education', 'default', 'housing', 'loan', 
+                           'contact', 'month', 'day_of_week', 'poutcome']
+    preprocessor = CustomLabelEncoder(columns=categorical_columns)
+    preprocessor.fit(input_data)
+    input_data = preprocessor.transform(input_data)
+    
+    feature_adder = FeaturesAdder()
+    input_data = feature_adder.transform(input_data)
+
     prediction = loaded_model.predict(input_data)
     return prediction[0]
 
